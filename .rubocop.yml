@@ -1,0 +1,16 @@
+AllCops:
+  TargetRubyVersion: 2.2
+  Exclude:
+    - 'db/schema.rb'
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Style/BlockDelimiters:
+  Enabled: true
+  EnforcedStyle: semantic
+  Exclude:
+    - 'spec/factories/**/*'
+
+Style/Lambda:
+  Enabled: false

@@ -1,0 +1,19 @@
+default: &defaults
+  adapter: postgresql
+  # To enable postgres extensions for multiple tenants:
+  schema_search_path: 'public,shared_extensions,pgmemento'
+  encoding: unicode
+  host: localhost
+  pool: 5
+
+development:
+  <<: *defaults
+  database: trailblazer_development
+
+test:
+  <<: *defaults
+  database: trailblazer_test
+
+
+production:
+  <<: *defaults

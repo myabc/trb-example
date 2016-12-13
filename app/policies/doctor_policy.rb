@@ -1,0 +1,2 @@
+class DoctorPolicy < EmployeePolicy
+end

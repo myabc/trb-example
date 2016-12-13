@@ -1,0 +1,2 @@
+class NursePolicy < EmployeePolicy
+end
