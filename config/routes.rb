@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   end
 
   namespace :api, path: '(/api)/', defaults: { format: 'json' } do
-    resources :hospitals, only: [:index]
+    devise_for :users
 
     namespace :v1, shallow: true do
       resources :hospitals, only: [:index, :show] do
