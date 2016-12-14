@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212231815) do
+ActiveRecord::Schema.define(version: 20161213235451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -108,6 +108,44 @@ ActiveRecord::Schema.define(version: 20161212231815) do
     t.index ["slug"], name: "index_hospitals_on_slug", unique: true, using: :btree
   end
 
+  create_table "oauth_access_grants", force: :cascade do |t|
+    t.integer  "resource_owner_id", null: false
+    t.integer  "application_id",    null: false
+    t.string   "token",             null: false
+    t.integer  "expires_in",        null: false
+    t.text     "redirect_uri",      null: false
+    t.datetime "created_at",        null: false
+    t.datetime "revoked_at"
+    t.string   "scopes"
+    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true, using: :btree
+  end
+
+  create_table "oauth_access_tokens", force: :cascade do |t|
+    t.integer  "resource_owner_id"
+    t.integer  "application_id"
+    t.string   "token",                               null: false
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.datetime "revoked_at"
+    t.datetime "created_at",                          null: false
+    t.string   "scopes"
+    t.string   "previous_refresh_token", default: "", null: false
+    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true, using: :btree
+    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id", using: :btree
+    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true, using: :btree
+  end
+
+  create_table "oauth_applications", force: :cascade do |t|
+    t.string   "name",                      null: false
+    t.string   "uid",                       null: false
+    t.string   "secret",                    null: false
+    t.text     "redirect_uri",              null: false
+    t.string   "scopes",       default: "", null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
+  end
+
   create_table "qualifications", force: :cascade do |t|
     t.integer  "employee_id", null: false
     t.text     "name"
@@ -133,16 +171,27 @@ ActiveRecord::Schema.define(version: 20161212231815) do
 
   create_table "users", force: :cascade do |t|
     t.integer  "hospital_id"
-    t.boolean  "admin",       default: false, null: false
-    t.string   "email",                       null: false
+    t.boolean  "admin",                  default: false, null: false
+    t.string   "email",                                  null: false
     t.string   "nickname"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "locale",      default: "en",  null: false
+    t.string   "locale",                 default: "en",  null: false
     t.decimal  "weight"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "encrypted_password",     default: "",    null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,     null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet     "current_sign_in_ip"
+    t.inet     "last_sign_in_ip"
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["hospital_id"], name: "index_users_on_hospital_id", using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
   create_table "votes", force: :cascade do |t|
@@ -183,6 +232,8 @@ ActiveRecord::Schema.define(version: 20161212231815) do
   add_foreign_key "departments", "users", column: "creator_id"
   add_foreign_key "employees", "clinics"
   add_foreign_key "employees", "users", column: "author_id"
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "qualifications", "employees", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_wards", "users"
   add_foreign_key "user_wards", "wards"

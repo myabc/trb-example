@@ -2,9 +2,8 @@ module Api
   class ApiController < ActionController::Base
     include Pundit
 
-    before_action :setup_api_request
-
-    # EXCEPTION HANDLERS from most generic to most specific
+    before_action :doorkeeper_authorize!
+    before_action :authenticate_user!
 
     unless Rails.env.development? || Rails.env.test?
       rescue_from StandardError do |exception|
@@ -46,11 +45,22 @@ module Api
       unauthenticated? || current_user.patient?
     end
 
-    private
+    def authenticate_user!
+      if doorkeeper_token
+        Thread.current[:current_user] = User.find(doorkeeper_token.resource_owner_id)
+      end
 
-    def setup_api_request
-      request.env['devise.skip_trackable'] = true
-      sign_out current_user if current_user.present?
+      return if current_user
+
+      render json: { errors: ['User is not authenticated!'] }, status: :unauthorized
+    end
+
+    def current_user
+      Thread.current[:current_user]
+    end
+
+    def errors_json(messages)
+      { errors: [*messages] }
     end
   end
 end
