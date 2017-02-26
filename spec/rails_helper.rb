@@ -37,6 +37,7 @@ RSpec.configure do |config|
   config.include ApplicationHelper, type: :controller
   config.include ApiHelper, type: :api
   config.include JsonSpec::Helpers, type: :api
+  config.include TokenMacros
 
   config.expect_with :rspec do |c|
     c.syntax = :expect

@@ -20,6 +20,6 @@ class V1::HospitalRepresenter < V1::BaseRepresenter
   private
 
   def self_url
-    api_v1_hospital_url(represented) if represented.id
+    api_v1_hospital_url(represented, only_path: true) if represented.id
   end
 end
