@@ -48,6 +48,8 @@ group :development, :test do
 end
 
 group :test do
+  gem 'rspec_api_documentation', '~> 4.9'
+
   gem 'guard-rspec'
   gem 'rack-test'
   gem 'database_cleaner', '~> 1.5'
