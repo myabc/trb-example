@@ -4,7 +4,6 @@ require 'reform/form/dry'
 module Department::Contract
   class Create < Reform::Form
     feature Reform::Form::Coercion
-    feature Reform::Form::Dry
 
     property :title
     property :director_name

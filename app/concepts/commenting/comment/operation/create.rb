@@ -8,7 +8,6 @@ class Commenting::Comment::Create < Trailblazer::Operation
 
   contract do
     feature Reform::Form::Coercion
-    feature Reform::Form::Dry
 
     property :message
 

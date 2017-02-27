@@ -1,7 +1,6 @@
 module Employee::Contract
   class Create < Reform::Form
     feature Reform::Form::Coercion
-    feature Reform::Form::Dry
 
     property :status, default: :former
 
