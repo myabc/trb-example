@@ -17,8 +17,6 @@ class V1::HospitalRepresenter < V1::BaseRepresenter
 
   property :url
 
-  private
-
   def self_url
     api_v1_hospital_url(represented, only_path: true) if represented.id
   end

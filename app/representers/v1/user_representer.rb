@@ -18,8 +18,6 @@ class V1::UserRepresenter < V1::BaseRepresenter
   property :locale
   property :created_employees, exec_context: :decorator
 
-  private
-
   def created_employees
     doctor_count  = Doctor.where(author: represented).count
     nurse_count   = Nurse.where(author: represented).count
