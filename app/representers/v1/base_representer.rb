@@ -1,3 +1,5 @@
+require 'roar/json'
+
 class V1::BaseRepresenter < Roar::Decorator
   include Roar::JSON
 

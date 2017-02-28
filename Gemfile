@@ -16,7 +16,7 @@ gem 'reform'
 gem 'reform-rails'
 gem 'representable',     '~> 3.0.3'
 gem 'roar',              '~> 1.1.0'
-gem 'roar-rails'
+gem 'roar-rails',        '~> 1.1.0'
 
 gem 'dry-validation', '~> 0.10.4'
 

@@ -217,13 +217,13 @@ GEM
       railties (>= 4.2.0, < 5.1)
     roar (1.1.0)
       representable (~> 3.0.0)
-    roar-rails (1.0.1)
+    roar-rails (1.1.0)
       actionpack
       railties (>= 3.0.0)
       responders
-      roar (>= 1.0.0, <= 1.1.0)
+      roar (~> 1.1.0)
       test_xml (>= 0.1.6)
-      uber (>= 0.0.5)
+      uber (< 0.2.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -329,7 +329,7 @@ DEPENDENCIES
   reform-rails
   representable (~> 3.0.3)
   roar (~> 1.1.0)
-  roar-rails
+  roar-rails (~> 1.1.0)
   rspec-rails (~> 3.5)
   rspec_api_documentation (~> 4.9)
   shoulda-matchers (~> 3.1)
