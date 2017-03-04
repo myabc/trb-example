@@ -1,3 +1,5 @@
+require 'trailblazer/endpoint/rails'
+
 require_dependency 'api_errors'
 require_dependency 'api_responder'
 require_dependency 'roar_api_responder'

@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/trailblazer/trailblazer-endpoint.git
+  revision: 9ec75c05425a5447893e67c47042a98026f3c94b
+  specs:
+    trailblazer-endpoint (0.0.1)
+      dry-matcher
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -85,6 +92,7 @@ GEM
       dry-container (~> 0.2, >= 0.2.6)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
+    dry-matcher (0.6.0)
     dry-types (0.9.4)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1)
@@ -337,6 +345,7 @@ DEPENDENCIES
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
   trailblazer (~> 2.0)
+  trailblazer-endpoint!
   trailblazer-rails (~> 1.0.2)
   tzinfo-data
   uri_template

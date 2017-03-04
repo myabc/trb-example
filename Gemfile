@@ -12,6 +12,7 @@ gem 'doorkeeper', '~> 4.4.0'
 
 gem 'trailblazer',       '~> 2.0'
 gem 'trailblazer-rails', '~> 1.0.2'
+gem 'trailblazer-endpoint', github: 'trailblazer/trailblazer-endpoint'
 gem 'reform'
 gem 'reform-rails'
 gem 'representable',     '~> 3.0.3'
