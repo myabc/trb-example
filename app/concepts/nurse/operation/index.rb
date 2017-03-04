@@ -1,7 +1,7 @@
 require_dependency 'employee/operation/index'
 
 class Nurse::Index < ::Employee::Index
-  representer :render, V1::NursesRepresenter
+  representer :serializer, V1::NursesRepresenter
 
   def model!(options, params:, current_user:, **)
     options['model'] = NursePolicy::Scope.new(

@@ -2,7 +2,7 @@ class Commenting::Comment::Index < Trailblazer::Operation
   step :model!
 
   extend Representer::DSL
-  representer :render, V1::CommentsRepresenter
+  representer :serializer, V1::CommentsRepresenter
 
   def model!(options, params:, current_user:, **)
     options['model'] = Commenting::CommentPolicy::Scope.new(

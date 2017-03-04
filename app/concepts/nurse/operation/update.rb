@@ -20,13 +20,13 @@ class Nurse::Update < ::Employee::Update
     extend Contract::DSL
     extend Representer::DSL
 
-    representer :render, V1::NurseRepresenter
+    representer :serializer, V1::NurseRepresenter
 
     contract Nurse::Contract::Update
   end
 
   class Privileged < Default
-    representer :render, V1::NurseRepresenter do
+    representer :serializer, V1::NurseRepresenter do
       include V1::NurseRepresenter::UpdatePrivileged
     end
 

@@ -10,7 +10,7 @@ class Commenting::Comment::CreateReply < Trailblazer::Operation
   step Contract::Persist()
 
   extend Representer::DSL
-  representer :render, V1::CommentRepresenter
+  representer :serializer, V1::CommentRepresenter
 
   extend Contract::DSL
 

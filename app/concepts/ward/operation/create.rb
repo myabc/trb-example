@@ -6,7 +6,7 @@ class Ward::Create < Trailblazer::Operation
   step Contract::Persist()
 
   extend Representer::DSL
-  representer :render, V1::WardRepresenter
+  representer :serializer, V1::WardRepresenter
 
   def model!(options, params:, current_user:, **)
     ward = find_department(params).wards.new

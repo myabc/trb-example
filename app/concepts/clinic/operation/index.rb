@@ -2,7 +2,7 @@ class Clinic::Index < Trailblazer::Operation
   step :model!
 
   extend Representer::DSL
-  representer :render, V1::ClinicsRepresenter
+  representer :serializer, V1::ClinicsRepresenter
 
   def model!(options, params:, current_user:, **)
     options['model'] = ClinicPolicy::Scope.new(

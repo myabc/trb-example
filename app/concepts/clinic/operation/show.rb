@@ -3,5 +3,5 @@ class Clinic::Show < Trailblazer::Operation
   step Policy::Pundit(ClinicPolicy, :show?)
 
   extend Representer::DSL
-  representer :render, V1::ClinicRepresenter
+  representer :serializer, V1::ClinicRepresenter
 end

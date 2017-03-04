@@ -22,13 +22,13 @@ class Nurse::Create < ::Employee::Create
     extend Contract::DSL
     extend Representer::DSL
 
-    representer :render, V1::NurseRepresenter
+    representer :serializer, V1::NurseRepresenter
 
     contract Nurse::Contract::Create
   end
 
   class Privileged < Default
-    representer :render, V1::NurseRepresenter do
+    representer :serializer, V1::NurseRepresenter do
       include V1::NurseRepresenter::CreatePrivileged
     end
 

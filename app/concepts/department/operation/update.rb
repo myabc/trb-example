@@ -19,13 +19,13 @@ class Department::Update < Trailblazer::Operation
     extend Contract::DSL
     extend Representer::DSL
 
-    representer :render, V1::DepartmentRepresenter
+    representer :serializer, V1::DepartmentRepresenter
 
     contract Department::Contract::Update
   end
 
   class Privileged < Default
-    representer :render, V1::DepartmentRepresenter do
+    representer :serializer, V1::DepartmentRepresenter do
       include V1::DepartmentRepresenter::UpdatePrivileged
     end
 

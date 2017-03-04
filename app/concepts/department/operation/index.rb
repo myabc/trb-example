@@ -2,7 +2,7 @@ class Department::Index < Trailblazer::Operation
   step :model!
 
   extend Representer::DSL
-  representer :render, V1::DepartmentsRepresenter
+  representer :serializer, V1::DepartmentsRepresenter
 
   def model!(options, params:, current_user:, **)
     options['model'] = DepartmentPolicy::Scope.new(

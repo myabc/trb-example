@@ -2,7 +2,7 @@ class Ward::Index < Trailblazer::Operation
   step :model!
 
   extend Representer::DSL
-  representer :render, V1::WardsRepresenter
+  representer :serializer, V1::WardsRepresenter
 
   def model!(options, params:, current_user:, **)
     options['model'] = WardPolicy::Scope.new(

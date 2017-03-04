@@ -6,5 +6,5 @@ class Clinic::Update < Trailblazer::Operation
   step Contract::Persist()
 
   extend Representer::DSL
-  representer :render, V1::ClinicRepresenter
+  representer :serializer, V1::ClinicRepresenter
 end

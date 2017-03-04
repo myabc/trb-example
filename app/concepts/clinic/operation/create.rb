@@ -6,7 +6,7 @@ class Clinic::Create < Trailblazer::Operation
   step Contract::Persist()
 
   extend Representer::DSL
-  representer :render, V1::ClinicRepresenter
+  representer :serializer, V1::ClinicRepresenter
 
   def model!(options, params:, current_user:, **)
     clinic         = find_department(params).clinics.new
