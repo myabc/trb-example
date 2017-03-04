@@ -17,7 +17,9 @@ RSpec.describe Clinic::Index, type: :operation do
   end
 
   it 'renders JSON' do
-    expect(operation.to_json).to have_json_path('clinics')
-    expect(operation.to_json).to have_json_path('clinics/0/id')
+    json = operation['representer.render.class'].new(operation['model']).to_json
+
+    expect(json).to have_json_path('clinics')
+    expect(json).to have_json_path('clinics/0/id')
   end
 end

@@ -31,10 +31,13 @@ RSpec.describe Commenting::Comment::Index, type: :operation do
   end
 
   it 'renders JSON' do
-    expect(operation.to_json).to have_json_path('comments')
-    expect(operation.to_json).to have_json_path('comments/0/replies')
-    expect(operation.to_json).to have_json_type(Array)
-      .at_path('comments/0/replies')
-    expect(operation.to_json).to have_json_size(2).at_path('comments/0/replies')
+    json = operation['representer.render.class']
+           .new(operation['model'])
+           .to_json(user_options: { include_replies: true })
+
+    expect(json).to have_json_path('comments')
+    expect(json).to have_json_path('comments/0/replies')
+    expect(json).to have_json_type(Array).at_path('comments/0/replies')
+    expect(json).to have_json_size(2).at_path('comments/0/replies')
   end
 end
