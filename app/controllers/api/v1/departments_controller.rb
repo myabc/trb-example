@@ -1,30 +1,24 @@
 class Api::V1::DepartmentsController < Api::V1::ApiController
-  self.responder = ::ApiResponder
+  include Trailblazer::Endpoint::Controller
 
   def index
-    respond Department::Index
+    endpoint Department::Index, args: [params, { 'current_user' => current_user }]
   end
 
   def show
-    respond Department::Show
+    endpoint Department::Show, args: [params, { 'current_user' => current_user }]
   end
 
   def create
-    respond Department::Create
+    endpoint Department::Create, args: [params, { 'current_user' => current_user }]
   end
 
   def update
-    respond Department::Update
+    endpoint Department::Update, args: [params, { 'current_user' => current_user }]
   end
 
   def destroy
-    run Department::Delete
-    head :no_content
-  end
-
-  private
-
-  def params!(params)
-    params.merge(current_user: current_user)
+    endpoint Department::Delete, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 end

@@ -9,8 +9,8 @@ class Api::V1::ApiController < Api::ApiController
   self.responder = ::RoarApiResponder
   respond_to :json
 
-  rescue_from Trailblazer::NotAuthorizedError do |_exception|
-    render json: { errors: [ApiErrors.hash_for_key(:forbidden)] },
-           status: :forbidden
-  end
+  # rescue_from Trailblazer::NotAuthorizedError do |_exception|
+  #   render json: { errors: [ApiErrors.hash_for_key(:forbidden)] },
+  #          status: :forbidden
+  # end
 end
