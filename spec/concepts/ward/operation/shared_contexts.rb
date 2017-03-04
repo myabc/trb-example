@@ -11,12 +11,11 @@ RSpec.shared_context 'with an existing ward' do
         url:      'http://guysandstthomas.nhs.uk/our-services/wards/ward-list.aspx',
         description: 'Care during your pregnancy.'
       },
-      department_id:  department.id,
-      current_user:   patient
+      department_id:  department.id
     }.with_indifferent_access
   }
 
   let!(:ward) {
-    Ward::Create.call(ward_params).model
+    Ward::Create.call(ward_params, 'current_user' => patient)['model']
   }
 end

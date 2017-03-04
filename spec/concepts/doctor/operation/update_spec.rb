@@ -4,7 +4,7 @@ require_relative './shared_contexts'
 RSpec.describe Doctor::Update, type: :operation do
   include_context 'with an existing former doctor'
 
-  subject(:operation) { Doctor::Update.call(params) }
+  subject(:operation) { Doctor::Update.call(params, 'current_user' => current_user) }
 
   context 'with valid params' do
     let(:current_user) { patient_author }
@@ -17,16 +17,15 @@ RSpec.describe Doctor::Update, type: :operation do
           notes:          'One of the best brain surgeons in the EU.',
           notes_html:     '<p>One of the best brain surgeons in the EU.</p>'
         },
-        id:           doctor.id,
-        current_user: current_user
+        id:           doctor.id
       }.with_indifferent_access
     }
 
     context 'as a patient' do
       it 'updates the doctor' do
-        expect(operation.model.biography)
+        expect(operation['model'].biography)
           .to eq 'He began his studies in Cambridge in 1990.'
-        expect(operation.model.notes_html)
+        expect(operation['model'].notes_html)
           .to eq '<p>One of the best brain surgeons in the EU.</p>'
       end
     end
@@ -35,9 +34,9 @@ RSpec.describe Doctor::Update, type: :operation do
       let(:current_user) { create(:admin) }
 
       it 'updates the doctor' do
-        expect(operation.model.biography)
+        expect(operation['model'].biography)
           .to eq 'He began his studies in Cambridge in 1990.'
-        expect(operation.model.notes_html)
+        expect(operation['model'].notes_html)
           .to eq '<p>One of the best brain surgeons in the EU.</p>'
       end
     end
@@ -59,29 +58,28 @@ RSpec.describe Doctor::Update, type: :operation do
           clinic_id:      other_clinic.id,
           author_id:      other_author.id
         },
-        id:           doctor.id,
-        current_user: current_user
+        id:           doctor.id
       }.with_indifferent_access
     }
 
     context 'as a patient' do
       it 'updates the doctor' do
-        expect(operation.model.biography)
+        expect(operation['model'].biography)
           .to eq 'He began his studies in Cambridge in 1990.'
-        expect(operation.model.notes_html)
+        expect(operation['model'].notes_html)
           .to eq '<p>One of the best brain surgeons in the EU.</p>'
       end
 
       it "updates the doctor's status" do
-        expect(operation.model).to be_current
+        expect(operation['model']).to be_current
       end
 
       it "does not update the doctor's author" do
-        expect(operation.model.author).to eq patient_author
+        expect(operation['model'].author).to eq patient_author
       end
 
       it "does not update the doctor's clinic" do
-        expect(operation.model.clinic).to eq clinic
+        expect(operation['model'].clinic).to eq clinic
       end
     end
 
@@ -89,22 +87,22 @@ RSpec.describe Doctor::Update, type: :operation do
       let(:current_user) { create(:admin) }
 
       it 'updates the doctor' do
-        expect(operation.model.biography)
+        expect(operation['model'].biography)
           .to eq 'He began his studies in Cambridge in 1990.'
-        expect(operation.model.notes_html)
+        expect(operation['model'].notes_html)
           .to eq '<p>One of the best brain surgeons in the EU.</p>'
       end
 
       it "updates the doctor's status" do
-        expect(operation.model).to be_current
+        expect(operation['model']).to be_current
       end
 
       it "updates the doctor's author" do
-        expect(operation.model.author).to eq other_author
+        expect(operation['model'].author).to eq other_author
       end
 
       it "updates the doctor's clinic" do
-        expect(operation.model.clinic).to eq other_clinic
+        expect(operation['model'].clinic).to eq other_clinic
       end
     end
   end

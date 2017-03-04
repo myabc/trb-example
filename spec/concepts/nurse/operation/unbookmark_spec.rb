@@ -6,18 +6,18 @@ RSpec.describe Nurse::Unbookmark, type: :operation do
 
   let(:patient) { create(:patient) }
   subject(:operation) {
-    Nurse::Unbookmark.call(id: nurse.id, current_user: patient)
+    Nurse::Unbookmark.call({ id: nurse.id }, 'current_user' => patient)
   }
 
   shared_examples_for 'unbookmarking the nurse' do
     it 'unbookmarks the nurse' do
-      expect(operation.model.bookmarks.for(patient).exists?).to be false
+      expect(operation['model'].bookmarks.for(patient).exists?).to be false
     end
   end
 
   context 'when the nurse is bookmarked' do
     before do
-      Nurse::Bookmark.call(id: nurse.id, current_user: patient)
+      Nurse::Bookmark.call({ id: nurse.id }, 'current_user' => patient)
     end
 
     it_behaves_like 'unbookmarking the nurse'

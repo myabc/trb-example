@@ -8,13 +8,12 @@ RSpec.describe Ward::Index, type: :operation do
 
   let(:user) { create(:patient) }
   subject(:operation) {
-    Ward::Index.call(department_id:  department.id,
-                     current_user: user)
+    Ward::Index.call({ department_id: department.id }, 'current_user' => user)
   }
 
   it 'shows the ward' do
-    expect(operation.model).to all be_a(Ward)
-    expect(operation.model.first).to eq ward
+    expect(operation['model']).to all be_a(Ward)
+    expect(operation['model'].first).to eq ward
   end
 
   it 'renders JSON' do

@@ -5,7 +5,7 @@ RSpec.describe Nurse::Update, type: :operation do
   include_context 'with an existing former nurse'
 
   context 'with invalid nested params' do
-    subject(:operation) { Nurse::Update.run(params)[1] }
+    subject(:operation) { Nurse::Update.call(params, 'current_user' => patient_author) }
 
     let(:params) {
       {
@@ -23,13 +23,12 @@ RSpec.describe Nurse::Update, type: :operation do
             }
           ]
         },
-        id: nurse.id,
-        current_user: patient_author
+        id: nurse.id
       }.with_indifferent_access
     }
 
     it 'does not update the nurse' do
-      expect(operation.contract.errors.messages)
+      expect(operation['result.contract.default'].errors.messages)
         .to include(qualifications: [/Needs at least two qualifications/])
     end
   end
@@ -37,7 +36,7 @@ RSpec.describe Nurse::Update, type: :operation do
   context 'with valid params' do
     let(:current_user)  { patient_author }
 
-    subject(:operation) { Nurse::Update.call(params) }
+    subject(:operation) { Nurse::Update.call(params, 'current_user' => current_user) }
 
     let(:params) {
       {
@@ -59,18 +58,17 @@ RSpec.describe Nurse::Update, type: :operation do
             }
           ]
         },
-        id: nurse.id,
-        current_user: current_user
+        id: nurse.id
       }.with_indifferent_access
     }
 
     it 'updates the nurse' do
-      expect(operation.model.notes_html)
+      expect(operation['model'].notes_html)
         .to eq '<p>Without valid qualification, <em>no chance!</em></p>'
     end
 
     it 'updates nested qualifications' do
-      qualifications = operation.model.qualifications
+      qualifications = operation['model'].qualifications
 
       expect(qualifications.size).to eq 3
       expect(qualifications.map(&:name))
@@ -85,7 +83,7 @@ RSpec.describe Nurse::Update, type: :operation do
     let(:other_author)  { create(:patient) }
     let(:current_user)  { patient_author }
 
-    subject(:operation) { Nurse::Update.call(params) }
+    subject(:operation) { Nurse::Update.call(params, 'current_user' => current_user) }
 
     let(:params) {
       {
@@ -96,27 +94,26 @@ RSpec.describe Nurse::Update, type: :operation do
           clinic_id:  other_clinic.id,
           author_id:  other_author.id
         },
-        id: nurse.id,
-        current_user: current_user
+        id: nurse.id
       }.with_indifferent_access
     }
 
     context 'as a patient' do
       it 'updates the nurse' do
-        expect(operation.model.notes_html)
+        expect(operation['model'].notes_html)
           .to eq '<p>Without valid qualification, <em>no chance!</em></p>'
       end
 
       it "updates the nurse's status" do
-        expect(operation.model).to be_current
+        expect(operation['model']).to be_current
       end
 
       it "does not update the nurse's author" do
-        expect(operation.model.author).to eq patient_author
+        expect(operation['model'].author).to eq patient_author
       end
 
       it "does not update the nurse's clinic" do
-        expect(operation.model.clinic).to eq clinic
+        expect(operation['model'].clinic).to eq clinic
       end
     end
 
@@ -124,20 +121,20 @@ RSpec.describe Nurse::Update, type: :operation do
       let(:current_user) { create(:admin) }
 
       it 'updates the nurse' do
-        expect(operation.model.notes_html)
+        expect(operation['model'].notes_html)
           .to eq '<p>Without valid qualification, <em>no chance!</em></p>'
       end
 
       it "updates the nurse's status" do
-        expect(operation.model).to be_current
+        expect(operation['model']).to be_current
       end
 
       it "updates the nurse's author" do
-        expect(operation.model.author).to eq other_author
+        expect(operation['model'].author).to eq other_author
       end
 
       it "updates the nurse's clinic" do
-        expect(operation.model.clinic).to eq other_clinic
+        expect(operation['model'].clinic).to eq other_clinic
       end
     end
   end

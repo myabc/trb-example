@@ -6,21 +6,20 @@ RSpec.describe Commenting::Comment::Create, type: :operation do
   let(:comment_author)  { create(:patient) }
 
   context 'with invalid params' do
-    subject(:operation) { Commenting::Comment::Create.run(params)[1] }
+    subject(:operation) { Commenting::Comment::Create.call(params, 'current_user' => comment_author) }
 
     context 'with missing comment params' do
       let(:params) {
         {
           comment:      {},
-          nurse_id:  nurse.id,
-          current_user: comment_author
+          nurse_id:  nurse.id
         }.with_indifferent_access
       }
 
       it 'does not create the comment' do
-        expect(operation.model).not_to be_persisted
-        expect(operation.contract.errors.messages).to have_key(:message)
-        expect(operation.contract.errors.messages.values[0])
+        expect(operation['model']).not_to be_persisted
+        expect(operation['result.contract.default'].errors.messages).to have_key(:message)
+        expect(operation['result.contract.default'].errors.messages.values[0])
           .to include('must be filled')
       end
     end
@@ -31,42 +30,40 @@ RSpec.describe Commenting::Comment::Create, type: :operation do
           comment:      {
             message: 'X'
           },
-          nurse_id:  nurse.id,
-          current_user: comment_author
+          nurse_id:  nurse.id
         }.with_indifferent_access
       }
 
       it 'does not create the comment' do
-        expect(operation.model).not_to be_persisted
-        expect(operation.contract.errors.messages)
+        expect(operation['model']).not_to be_persisted
+        expect(operation['result.contract.default'].errors.messages)
           .to eq(message: ['size cannot be less than 2'])
       end
     end
   end
 
   context 'with valid params' do
-    subject(:operation) { Commenting::Comment::Create.call(params) }
+    subject(:operation) { Commenting::Comment::Create.call(params, 'current_user' => comment_author) }
 
     let(:params) {
       {
         comment: {
           message: 'Constructive ideas for improvement.'
         },
-        nurse_id:  nurse.id,
-        current_user: comment_author
+        nurse_id:  nurse.id
       }.with_indifferent_access
     }
 
     it 'creates the comment' do
-      expect(operation.model).to be_persisted
-      expect(operation.model).to have_attributes(
+      expect(operation['model']).to be_persisted
+      expect(operation['model']).to have_attributes(
         message:  'Constructive ideas for improvement.',
         author:   comment_author
       )
     end
 
     it 'creates a new thread' do
-      thread = operation.model.thread
+      thread = operation['model'].thread
 
       expect(thread).to be_persisted
       expect(thread.subject.id).to eq nurse.id

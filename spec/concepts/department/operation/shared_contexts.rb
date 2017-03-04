@@ -7,12 +7,11 @@ RSpec.shared_context 'with an existing department' do
       department: {
         title:    'Advanced Aeronautical Engineering'
       },
-      hospital_id:  hospital.id,
-      current_user:   patient_creator
+      hospital_id:  hospital.id
     }.with_indifferent_access
   }
 
   let!(:department) {
-    Department::Create.call(department_params).model
+    Department::Create.call(department_params, 'current_user' => patient_creator)['model']
   }
 end
