@@ -1,26 +1,10 @@
 class Clinic::Update < Trailblazer::Operation
-  include Model
-  include Policy
-  model  Clinic,       :update
-  policy ClinicPolicy, :update?
+  step Model(Clinic, :update)
+  step Policy::Pundit(ClinicPolicy, :update?)
+  step Contract::Build(constant: Clinic::Contract::Update)
+  step Contract::Validate(key: 'clinic')
+  step Contract::Persist()
 
-  include Representer
-  include Representer::Deserializer::Hash
-  representer V1::ClinicRepresenter
-
-  contract Clinic::Contract::Update
-
-  def process(params)
-    validate(params) do
-      contract.save
-    end
-  end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
-  end
+  extend Representer::DSL
+  representer :render, V1::ClinicRepresenter
 end

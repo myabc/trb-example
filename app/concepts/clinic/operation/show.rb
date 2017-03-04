@@ -1,19 +1,7 @@
 class Clinic::Show < Trailblazer::Operation
-  include Model
-  include Policy
-  model  Clinic,       :find
-  policy ClinicPolicy, :show?
+  step Model(Clinic, :find)
+  step Policy::Pundit(ClinicPolicy, :show?)
 
-  include Representer
-  representer V1::ClinicRepresenter
-
-  def process(_params); end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
-  end
+  extend Representer::DSL
+  representer :render, V1::ClinicRepresenter
 end

@@ -1,25 +1,11 @@
 class Department::Show < Trailblazer::Operation
-  include Policy
-  policy DepartmentPolicy, :show?
+  step :model!
+  step Policy::Pundit(DepartmentPolicy, :show?)
 
-  include Representer
-  representer V1::DepartmentRepresenter
+  extend Representer::DSL
+  representer :render, V1::DepartmentRepresenter
 
-  def model!(params)
-    Department.friendly.find(params[:id])
-  end
-
-  def process(_params); end
-
-  def to_json(*)
-    include_params      = @params.fetch(:include, '').split(',').map(&:strip)
-    permitted_includes  = %w(nurses doctors) & include_params
-
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user),
-        includes:     permitted_includes
-      }
-    })
+  def model!(options, params:, **)
+    options['model'] = Department.friendly.find(params[:id])
   end
 end

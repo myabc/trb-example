@@ -1,8 +1,8 @@
 require_dependency 'employee/operation/show'
 
 class Doctor::Show < ::Employee::Show
-  model  Doctor, :find
-  policy DoctorPolicy, :show?
+  step Model(Doctor, :find)
+  step Policy::Pundit(DoctorPolicy, :show?)
 
-  representer V1::DoctorRepresenter
+  representer :render, V1::DoctorRepresenter
 end

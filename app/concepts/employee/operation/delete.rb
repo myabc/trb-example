@@ -1,8 +1,5 @@
 class Employee::Delete < Trailblazer::Operation
-  include Model
-  include Policy
-
-  def process(_params)
+  def process(_options, model:, **)
     model.destroy
   end
 end

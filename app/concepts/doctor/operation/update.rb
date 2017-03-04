@@ -1,21 +1,31 @@
 require_dependency 'employee/operation/update'
 
 class Doctor::Update < ::Employee::Update
-  include Resolver
+  step Model(Doctor, :update)
+  step Policy::Pundit(DoctorPolicy, :update?)
+  step Nested(:build!)
 
-  model  Doctor, :update
-  policy DoctorPolicy, :update?
+  def build!(options, **)
+    return self.class::Privileged if options['policy.default'].user_is_privileged?
+    self.class::Default
+  end
 
-  self.builder_class = Doctor::Create.builder_class
+  class Default < Trailblazer::Operation
+    step Model(Doctor, :update)
+    step Policy::Pundit(DoctorPolicy, :update?)
+    step Contract::Build()
+    step Contract::Validate(key: 'doctor')
+    step Contract::Persist()
+    extend Contract::DSL
+    extend Representer::DSL
 
-  class Default < self
-    representer V1::DoctorRepresenter
+    representer :render, V1::DoctorRepresenter
 
     contract Doctor::Contract::Update
   end
 
   class Privileged < Default
-    representer V1::DoctorRepresenter do
+    representer :render, V1::DoctorRepresenter do
       include V1::DoctorRepresenter::UpdatePrivileged
     end
 

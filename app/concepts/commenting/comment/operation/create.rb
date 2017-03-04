@@ -1,12 +1,17 @@
 require 'reform/form/coercion'
 
 class Commenting::Comment::Create < Trailblazer::Operation
-  include Policy
-  policy Commenting::CommentPolicy, :create?
+  step :model!
+  step Policy::Pundit(Commenting::CommentPolicy, :create?)
+  step Contract::Build()
+  step :assign_author
+  step Contract::Validate(key: 'comment')
+  step Contract::Persist()
 
-  include Representer
-  include Representer::Deserializer::Hash
-  representer V1::CommentRepresenter
+  extend Representer::DSL
+  representer :render, V1::CommentRepresenter
+
+  extend Contract::DSL
 
   contract do
     feature Reform::Form::Coercion
@@ -22,23 +27,13 @@ class Commenting::Comment::Create < Trailblazer::Operation
     end
   end
 
-  def model!(params)
-    thread = find_employee(params).threads.first_or_create
-    thread.comments.new
+  def model!(options, params:, **)
+    thread            = find_employee(params).threads.first_or_create
+    options['model']  = thread.comments.new
   end
 
-  def process(params)
-    validate(params) do |contract|
-      comment         = contract.model
-      comment.author  = params.fetch(:current_user)
-      contract.save
-
-      notify_author if contract.persisted?
-    end
-  end
-
-  def to_json(*)
-    super(user_options: { include_replies: true })
+  def assign_author(_options, model:, current_user:, **)
+    model.author = current_user
   end
 
   private

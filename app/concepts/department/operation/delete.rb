@@ -1,12 +1,13 @@
 class Department::Delete < Trailblazer::Operation
-  include Policy
-  policy DepartmentPolicy, :destroy?
+  step :model!
+  step Policy::Pundit(DepartmentPolicy, :destroy?)
+  step :process
 
-  def model!(params)
-    Department.friendly.find(params[:id])
+  def model!(options, params:, **)
+    options['model'] = Department.friendly.find(params[:id])
   end
 
-  def process(_params)
+  def process(_options, model:, **)
     model.destroy!
   end
 end

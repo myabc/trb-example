@@ -1,14 +1,13 @@
 class Ward::Upvote < Trailblazer::Operation
-  include Model
-  include Policy
-  model Ward, :find
-  policy WardPolicy, :show?
+  step Model(Ward, :find)
+  step Policy::Pundit(WardPolicy, :show?)
+  step :process
 
   attr_accessor :vote
 
-  def process(params)
+  def process(_options, model:, current_user:, **)
     Vote.transaction do
-      self.vote = model.votes.for(params.fetch(:current_user))
+      self.vote = model.votes.for(current_user)
                        .first_or_initialize
       vote.direction = 'up'
       vote.save!

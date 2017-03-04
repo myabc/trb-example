@@ -1,23 +1,15 @@
 class Department::Index < Trailblazer::Operation
-  include Representer
-  representer V1::DepartmentsRepresenter
+  step :model!
 
-  def model!(params)
-    DepartmentPolicy::Scope.new(
-      params.fetch(:current_user), find_hospital(params).departments
+  extend Representer::DSL
+  representer :render, V1::DepartmentsRepresenter
+
+  def model!(options, params:, current_user:, **)
+    options['model'] = DepartmentPolicy::Scope.new(
+      current_user, find_hospital(params).departments
     ).resolve
-                           .order(created_at: :asc)
-                           .includes(:creator)
-  end
-
-  def process(_params); end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
+                                              .order(created_at: :asc)
+                                              .includes(:creator)
   end
 
   private

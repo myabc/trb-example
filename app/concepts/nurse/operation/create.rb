@@ -1,28 +1,34 @@
 require_dependency 'employee/operation/create'
 
 class Nurse::Create < ::Employee::Create
-  include Resolver
+  step :model!
+  step Policy::Pundit(NursePolicy, :create?)
+  # step Nested(:build!)
+  step Contract::Build(constant: Nurse::Contract::Create)
+  step :assign_author
+  step Contract::Validate(key: 'nurse')
+  step Contract::Persist()
 
-  model  Nurse, :create
-  policy NursePolicy, :create?
-
-  builds ->(_model, policy, _params) do
-    return self::Privileged if policy.user_is_privileged?
-    self::Default
+  def build!(options, **)
+    return self.class::Privileged if options['policy.default'].user_is_privileged?
+    self.class::Default
   end
 
-  def self.model!(params)
-    find_clinic(params).nurses.new
+  def model!(options, params:, **)
+    options['model'] = find_clinic(params).nurses.new
   end
 
-  class Default < self
-    representer V1::NurseRepresenter
+  class Default < Trailblazer::Operation
+    extend Contract::DSL
+    extend Representer::DSL
+
+    representer :render, V1::NurseRepresenter
 
     contract Nurse::Contract::Create
   end
 
   class Privileged < Default
-    representer V1::NurseRepresenter do
+    representer :render, V1::NurseRepresenter do
       include V1::NurseRepresenter::CreatePrivileged
     end
 

@@ -1,10 +1,9 @@
 class Ward::Delete < Trailblazer::Operation
-  include Model
-  include Policy
-  model  Ward,       :find
-  policy WardPolicy, :destroy?
+  step Model(Ward, :find)
+  step Policy::Pundit(WardPolicy, :destroy?)
+  step :process
 
-  def process(_params)
-    ward = model.destroy!
+  def process(_options, model:, **)
+    model.destroy!
   end
 end

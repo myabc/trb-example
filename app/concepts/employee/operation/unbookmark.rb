@@ -1,8 +1,5 @@
 class Employee::Unbookmark < Trailblazer::Operation
-  include Model
-  include Policy
-
-  def process(params)
-    model.bookmarks.for(params.fetch(:current_user)).destroy_all
+  def process(_options, model:, current_user:, **)
+    model.bookmarks.for(current_user).destroy_all
   end
 end

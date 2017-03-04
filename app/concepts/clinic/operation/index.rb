@@ -1,21 +1,13 @@
 class Clinic::Index < Trailblazer::Operation
-  include Representer
-  representer V1::ClinicsRepresenter
+  step :model!
 
-  def model!(params)
-    ClinicPolicy::Scope.new(
-      params.fetch(:current_user), find_department(params).clinics
+  extend Representer::DSL
+  representer :render, V1::ClinicsRepresenter
+
+  def model!(options, params:, current_user:, **)
+    options['model'] = ClinicPolicy::Scope.new(
+      current_user, find_department(params).clinics
     ).resolve.eager_load(:author)
-  end
-
-  def process(_params); end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
   end
 
   private

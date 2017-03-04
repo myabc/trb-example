@@ -1,12 +1,18 @@
 require 'reform/form/coercion'
 
 class Commenting::Comment::CreateReply < Trailblazer::Operation
-  include Policy
-  policy Commenting::CommentPolicy, :create?
+  step :model!
+  step Policy::Pundit(Commenting::CommentPolicy, :create?)
+  step Contract::Build()
+  step :assign_thread
+  step :assign_author
+  step Contract::Validate(key: 'comment')
+  step Contract::Persist()
 
-  include Representer
-  include Representer::Deserializer::Hash
-  representer V1::CommentRepresenter
+  extend Representer::DSL
+  representer :render, V1::CommentRepresenter
+
+  extend Contract::DSL
 
   contract do
     feature Reform::Form::Coercion
@@ -22,20 +28,17 @@ class Commenting::Comment::CreateReply < Trailblazer::Operation
     end
   end
 
-  def model!(params)
+  def model!(options, params:, **)
     reply_to_comment = Commenting::Comment.find(params.fetch(:comment_id))
-    reply_to_comment.replies.new
+    options['model'] = reply_to_comment.replies.new
   end
 
-  def process(params)
-    validate(params) do |contract|
-      comment         = contract.model
-      comment.thread  = comment.reply_to.thread
-      comment.author  = params.fetch(:current_user)
-      contract.save
+  def assign_thread(_options, model:, **)
+    model.thread = model.reply_to.thread
+  end
 
-      notify_author if contract.persisted?
-    end
+  def assign_author(_options, model:, current_user:, **)
+    model.author = current_user
   end
 
   private

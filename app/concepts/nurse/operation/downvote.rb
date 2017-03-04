@@ -1,6 +1,7 @@
 require_dependency 'employee/operation/downvote'
 
 class Nurse::Downvote < ::Employee::Downvote
-  model  Nurse, :find
-  policy NursePolicy, :show?
+  step Model(Nurse, :find)
+  step Policy::Pundit(NursePolicy, :show?)
+  step :process
 end

@@ -1,29 +1,17 @@
 class Clinic::Create < Trailblazer::Operation
-  include Policy
-  policy ClinicPolicy, :create?
+  step :model!
+  step Policy::Pundit(ClinicPolicy, :create?)
+  step Contract::Build(constant: Clinic::Contract::Create)
+  step Contract::Validate(key: 'clinic')
+  step Contract::Persist()
 
-  include Representer
-  include Representer::Deserializer::Hash
-  representer V1::ClinicRepresenter
+  extend Representer::DSL
+  representer :render, V1::ClinicRepresenter
 
-  contract Clinic::Contract::Create
-
-  def model!(params)
+  def model!(options, params:, current_user:, **)
     clinic         = find_department(params).clinics.new
-    clinic.author  = params.fetch(:current_user)
-    clinic
-  end
-
-  def process(params)
-    validate(params, &:save)
-  end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
+    clinic.author  = current_user
+    options['model'] = clinic
   end
 
   private

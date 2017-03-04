@@ -1,6 +1,7 @@
 require_dependency 'employee/operation/delete'
 
 class Nurse::Delete < ::Employee::Delete
-  model  Nurse, :find
-  policy NursePolicy, :destroy?
+  step Model(Nurse, :find)
+  step Policy::Pundit(NursePolicy, :destroy?)
+  step :process
 end

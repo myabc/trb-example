@@ -1,12 +1,9 @@
 class Employee::Downvote < Trailblazer::Operation
-  include Model
-  include Policy
-
   attr_accessor :vote
 
-  def process(params)
+  def process(_options, model:, current_user:, **)
     Vote.transaction do
-      self.vote = model.votes.for(params.fetch(:current_user))
+      self.vote = model.votes.for(current_user)
                        .first_or_initialize
       vote.direction = 'down'
       vote.save!
