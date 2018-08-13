@@ -8,7 +8,7 @@ gem 'puma'
 
 gem 'devise', '~> 4.2.0'
 gem 'devise-encryptable'
-gem 'doorkeeper'
+gem 'doorkeeper', '~> 4.4.0'
 
 gem 'trailblazer',       '~> 1.1.2'
 gem 'trailblazer-rails', '~> 0.2.4'
