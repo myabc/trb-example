@@ -11,6 +11,7 @@ gem 'devise-encryptable'
 gem 'doorkeeper', '~> 4.4.0'
 
 gem 'trailblazer',       '~> 1.1.2'
+gem 'trailblazer-loader','~> 0.1.2'
 gem 'trailblazer-rails', '~> 0.2.4'
 gem 'reform',            '~> 2.2.1'
 gem 'reform-rails'
