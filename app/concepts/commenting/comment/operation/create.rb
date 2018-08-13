@@ -1,3 +1,5 @@
+require 'reform/form/coercion'
+
 class Commenting::Comment::Create < Trailblazer::Operation
   include Policy
   policy Commenting::CommentPolicy, :create?

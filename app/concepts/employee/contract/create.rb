@@ -1,3 +1,5 @@
+require 'reform/form/coercion'
+
 module Employee::Contract
   class Create < Reform::Form
     feature Reform::Form::Coercion
