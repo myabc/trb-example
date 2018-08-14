@@ -1,10 +1,9 @@
 class Ward::Unbookmark < Trailblazer::Operation
-  include Model
-  include Policy
-  model Ward, :find
-  policy WardPolicy, :unbookmark?
+  step Model(Ward, :find)
+  step Policy::Pundit(WardPolicy, :unbookmark?)
+  step :process
 
-  def process(params)
-    model.bookmarks.for(params.fetch(:current_user)).destroy_all
+  def process(_options, model:, current_user:, **)
+    model.bookmarks.for(current_user).destroy_all
   end
 end

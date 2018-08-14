@@ -1,11 +1,11 @@
 require_dependency 'employee/operation/index'
 
 class Doctor::Index < ::Employee::Index
-  representer V1::DoctorsRepresenter
+  representer :serializer, V1::DoctorsRepresenter
 
-  def model!(params)
-    DoctorPolicy::Scope.new(
-      params.fetch(:current_user), find_clinic(params).doctors
+  def model!(options, params:, current_user:, **)
+    options['model'] = DoctorPolicy::Scope.new(
+      current_user, find_clinic(params).doctors
     ).resolve.includes(:author)
   end
 end

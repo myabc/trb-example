@@ -1,7 +1,7 @@
 class Employee::Index < Trailblazer::Operation
-  include Representer
+  extend Representer::DSL
 
-  def process(_params); end
+  step :model!
 
   private
 

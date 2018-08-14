@@ -1,23 +1,8 @@
 require_dependency 'employee/contract/update'
 
 class Employee::Update < Trailblazer::Operation
-  include Model
-  include Policy
-  include Representer
-  include Representer::Deserializer::Hash
-
-  def process(params)
-    validate(params) do
-      contract.save
-
-      process_employee
-
-      case status_changed_to
-      when 'current'
-        notify_author_current
-      end
-    end
-  end
+  extend Contract::DSL
+  extend Representer::DSL
 
   private
 

@@ -8,16 +8,18 @@ RSpec.describe Department::Index, type: :operation do
 
   let(:patient) { create(:patient) }
   subject(:operation) {
-    Department::Index.call(hospital_id: hospital.id, current_user: patient)
+    Department::Index.call({ hospital_id: hospital.id }, 'current_user' => patient)
   }
 
   it 'shows the department' do
-    expect(operation.model).to all be_a(Department)
-    expect(operation.model.first).to eq department
+    expect(operation['model']).to all be_a(Department)
+    expect(operation['model'].first).to eq department
   end
 
   it 'renders JSON' do
-    expect(operation.to_json).to have_json_path('departments')
-    expect(operation.to_json).to have_json_path('departments/0/id')
+    json = operation['representer.render.class'].new(operation['model']).to_json
+
+    expect(json).to have_json_path('departments')
+    expect(json).to have_json_path('departments/0/id')
   end
 end

@@ -1,27 +1,21 @@
 class Api::V1::CommentsController < Api::V1::ApiController
-  self.responder = ::ApiResponder
+  include Trailblazer::Endpoint::Controller
 
   def index
-    respond Commenting::Comment::Index
+    endpoint Commenting::Comment::Index, args: [params, { 'current_user' => current_user }]
   end
 
   def create
-    respond Commenting::Comment::Create
+    endpoint Commenting::Comment::Create, args: [params, { 'current_user' => current_user }]
   end
 
   def destroy
-    run Commenting::Comment::Delete
-    head :no_content
+    endpoint Commenting::Comment::Delete, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 
   def report
-    run Commenting::Comment::Report
-    head :no_content
-  end
-
-  private
-
-  def params!(params)
-    params.merge(current_user: current_user)
+    endpoint Commenting::Comment::Report, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 end

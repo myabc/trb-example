@@ -1,33 +1,17 @@
 class Ward::Create < Trailblazer::Operation
-  include Policy
-  policy WardPolicy, :create?
+  step :model!
+  step Policy::Pundit(WardPolicy, :create?)
+  step Contract::Build(constant: Ward::Contract::Create)
+  step Contract::Validate(key: 'ward')
+  step Contract::Persist()
 
-  include Representer
-  include Representer::Deserializer::Hash
-  representer V1::WardRepresenter
+  extend Representer::DSL
+  representer :serializer, V1::WardRepresenter
 
-  contract Ward::Contract::Create
-
-  alias ward model
-
-  def model!(params)
+  def model!(options, params:, current_user:, **)
     ward = find_department(params).wards.new
-    ward.creator = params.fetch(:current_user)
-    ward
-  end
-
-  def process(params)
-    validate(params) do
-      contract.save
-    end
-  end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
+    ward.creator = current_user
+    options['model'] = ward
   end
 
   private

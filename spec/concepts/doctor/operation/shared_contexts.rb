@@ -8,7 +8,7 @@ RSpec.shared_context 'with an existing doctor' do
                     author:  patient_author)
   }
 
-  let!(:doctor) { Doctor::Create.call(doctor_params).model }
+  let!(:doctor) { Doctor::Create.call(doctor_params, 'current_user' => patient_author)['model'] }
 end
 
 RSpec.shared_context 'with an existing former doctor' do
@@ -22,8 +22,7 @@ RSpec.shared_context 'with an existing former doctor' do
         notes:          'A good GP.',
         notes_html:     '<p>A good GP.</p>'
       },
-      clinic_id:    clinic.id,
-      current_user: patient_author
+      clinic_id:    clinic.id
     }.with_indifferent_access
   }
 end
@@ -40,8 +39,7 @@ RSpec.shared_context 'with an existing current doctor' do
         notes_html:     '<p>A good GP.</p>',
         status:         'current'
       },
-      clinic_id:    clinic.id,
-      current_user: patient_author
+      clinic_id:    clinic.id
     }.with_indifferent_access
   }
 end

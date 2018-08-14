@@ -1,13 +1,12 @@
 class Commenting::Comment::Report < Trailblazer::Operation
-  include Model
-  include Policy
-  model  Commenting::Comment, :find
-  policy Commenting::CommentPolicy, :report?
+  step Model(Commenting::Comment, :find)
+  step Policy::Pundit(Commenting::CommentPolicy, :report?)
+  step :process
 
-  def process(_params)
+  def process(_options, model:, **)
     model.reported!
 
-    notify_author if status_changed_to == 'reported'
+    # notify_author if status_changed_to == 'reported'
   end
 
   private

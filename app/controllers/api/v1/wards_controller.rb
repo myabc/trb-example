@@ -1,41 +1,35 @@
 class Api::V1::WardsController < Api::V1::ApiController
-  self.responder = ::ApiResponder
+  include Trailblazer::Endpoint::Controller
 
   def index
-    respond Ward::Index
+    endpoint Ward::Index, args: [params, { 'current_user' => current_user }]
   end
 
   def show
-    respond Ward::Show
+    endpoint Ward::Show, args: [params, { 'current_user' => current_user }]
   end
 
   def create
-    respond Ward::Create
+    endpoint Ward::Create, args: [params, { 'current_user' => current_user }]
   end
 
   def destroy
-    run Ward::Delete
-    head :no_content
+    endpoint Ward::Delete, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 
   def bookmark
-    run Ward::Bookmark
-    head :no_content
+    endpoint Ward::Bookmark, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 
   def unbookmark
-    run Ward::Unbookmark
-    head :no_content
+    endpoint Ward::Unbookmark, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 
   def upvote
-    run Ward::Upvote
-    head :no_content
-  end
-
-  private
-
-  def params!(params)
-    params.merge(current_user: current_user)
+    endpoint Ward::Upvote, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 end

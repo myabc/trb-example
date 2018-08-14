@@ -8,7 +8,7 @@ RSpec.shared_context 'with an existing nurse' do
                     author:  patient_author)
   }
 
-  let!(:nurse) { Nurse::Create.call(nurse_params).model }
+  let!(:nurse) { Nurse::Create.call(nurse_params, 'current_user' => patient_author)['model'] }
 end
 
 RSpec.shared_context 'with an existing former nurse' do
@@ -31,8 +31,7 @@ RSpec.shared_context 'with an existing former nurse' do
           }
         ]
       },
-      clinic_id:   clinic.id,
-      current_user: patient_author
+      clinic_id:   clinic.id
     }.with_indifferent_access
   }
 end
@@ -58,8 +57,7 @@ RSpec.shared_context 'with an existing current nurse' do
           }
         ]
       },
-      clinic_id:   clinic.id,
-      current_user: patient_author
+      clinic_id:   clinic.id
     }.with_indifferent_access
   }
 end

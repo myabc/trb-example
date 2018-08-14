@@ -1,33 +1,33 @@
 class Department::Create < Trailblazer::Operation
-  include Resolver
+  step :model!
+  step Policy::Pundit(DepartmentPolicy, :create?)
+  # step Nested(:build!)
+  step Contract::Build(constant: Department::Contract::Create)
+  step Contract::Validate(key: 'department')
+  step Contract::Persist()
 
-  include Model
-  include Policy
-  model  Department,       :create
-  policy DepartmentPolicy, :create?
-
-  include Representer
-  include Representer::Deserializer::Hash
-
-  builds ->(_model, policy, _params) do
-    return self::Privileged if policy.user_is_privileged?
-    self::Default
+  def build!(options, **)
+    return self.class::Privileged if options['policy.default'].user_is_privileged?
+    self.class::Default
   end
 
-  def self.model!(params)
+  def model!(options, params:, current_user:, **)
     department          = find_hospital(params).departments.new
-    department.creator  = params.fetch(:current_user)
-    department
+    department.creator  = current_user
+    options['model']    = department
   end
 
-  class Default < self
-    representer V1::DepartmentRepresenter
+  class Default < Trailblazer::Operation
+    extend Contract::DSL
+    extend Representer::DSL
+
+    representer :serializer, V1::DepartmentRepresenter
 
     contract Department::Contract::Create
   end
 
   class Privileged < Default
-    representer V1::DepartmentRepresenter do
+    representer :serializer, V1::DepartmentRepresenter do
       include V1::DepartmentRepresenter::CreatePrivileged
     end
 
@@ -36,23 +36,9 @@ class Department::Create < Trailblazer::Operation
     end
   end
 
-  def process(params)
-    validate(params) do |contract|
-      contract.save
+  private
 
-      model.reload
-    end
-  end
-
-  def to_json(*)
-    super({
-      user_options: {
-        current_user: @params.fetch(:current_user)
-      }
-    })
-  end
-
-  def self.find_hospital(params)
+  def find_hospital(params)
     Hospital.friendly.find(params[:hospital_id])
   end
 end

@@ -6,12 +6,12 @@ RSpec.describe Nurse::Bookmark, type: :operation do
 
   let(:patient) { create(:patient) }
   subject(:operation) {
-    Nurse::Bookmark.call(id: nurse.id, current_user: patient)
+    Nurse::Bookmark.call({ id: nurse.id }, 'current_user' => patient)
   }
 
   shared_examples_for 'bookmarking the nurse' do
     it 'bookmarks the nurse' do
-      expect(operation.model.bookmarks.for(patient).exists?).to be true
+      expect(operation['model'].bookmarks.for(patient).exists?).to be true
     end
   end
 
@@ -21,7 +21,7 @@ RSpec.describe Nurse::Bookmark, type: :operation do
 
   context 'when the nurse is already bookmarked' do
     before do
-      Nurse::Bookmark.call(id: nurse.id, current_user: patient)
+      Nurse::Bookmark.call({ id: nurse.id }, 'current_user' => patient)
     end
 
     it_behaves_like 'bookmarking the nurse'

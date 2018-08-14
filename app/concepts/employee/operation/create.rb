@@ -1,21 +1,14 @@
 class Employee::Create < Trailblazer::Operation
-  include Policy
-  include Representer
-  include Representer::Deserializer::Hash
+  extend Contract::DSL
+  extend Representer::DSL
 
-  def process(params)
-    validate(params) do
-      model.author = params.fetch(:current_user)
-
-      contract.save
-
-      process_employee
-    end
+  def assign_author(_options, model:, current_user:, **)
+    model.author = current_user
   end
 
-  def process_employee; end
+  private
 
-  def self.find_clinic(params)
+  def find_clinic(params)
     Clinic.find(params.fetch(:clinic_id))
   end
 end

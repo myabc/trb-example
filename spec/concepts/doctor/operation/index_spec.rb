@@ -6,10 +6,10 @@ RSpec.describe Doctor::Index, type: :operation do
 
   let(:patient) { create(:patient) }
   subject(:operation) {
-    Doctor::Index.call(clinic_id: clinic.id, current_user: patient)
+    Doctor::Index.call({ clinic_id: clinic.id }, 'current_user' => patient)
   }
 
   it 'shows the doctor' do
-    expect(operation.model).to include doctor
+    expect(operation['model']).to include doctor
   end
 end

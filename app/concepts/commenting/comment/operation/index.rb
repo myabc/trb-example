@@ -1,18 +1,14 @@
 class Commenting::Comment::Index < Trailblazer::Operation
-  include Representer
-  representer V1::CommentsRepresenter
+  step :model!
 
-  def model!(params)
-    Commenting::CommentPolicy::Scope.new(
-      params.fetch(:current_user),
+  extend Representer::DSL
+  representer :serializer, V1::CommentsRepresenter
+
+  def model!(options, params:, current_user:, **)
+    options['model'] = Commenting::CommentPolicy::Scope.new(
+      current_user,
       find_employee(params).comments
     ).resolve.comment_tree
-  end
-
-  def process(_params); end
-
-  def to_json(*)
-    super(user_options: { include_replies: true })
   end
 
   private

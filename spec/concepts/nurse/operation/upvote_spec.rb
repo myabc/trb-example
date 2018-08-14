@@ -6,12 +6,12 @@ RSpec.describe Nurse::Upvote, type: :operation do
 
   let(:patient_voter) { create(:patient) }
   subject(:operation) {
-    Nurse::Upvote.call(id: nurse.id, current_user: patient_voter)
+    Nurse::Upvote.call({ id: nurse.id }, 'current_user' => patient_voter)
   }
 
   shared_examples_for 'upvoting the nurse' do
     it 'upvotes the nurse' do
-      user_nurse_votes = operation.model.votes.for(patient_voter)
+      user_nurse_votes = operation['model'].votes.for(patient_voter)
 
       expect(user_nurse_votes.up.count).to eq 1
       expect(user_nurse_votes.down.count).to eq 0
@@ -24,7 +24,7 @@ RSpec.describe Nurse::Upvote, type: :operation do
 
   context 'when the user has already upvoted' do
     before do
-      Nurse::Upvote.call(id: nurse.id, current_user: patient_voter)
+      Nurse::Upvote.call({ id: nurse.id }, 'current_user' => patient_voter)
     end
 
     it_behaves_like 'upvoting the nurse'
@@ -32,7 +32,7 @@ RSpec.describe Nurse::Upvote, type: :operation do
 
   context 'when the user has already downvoted' do
     before do
-      Nurse::Downvote.call(id: nurse.id, current_user: patient_voter)
+      Nurse::Downvote.call({ id: nurse.id }, 'current_user' => patient_voter)
     end
 
     it_behaves_like 'upvoting the nurse'

@@ -1,10 +1,9 @@
 class Clinic::Delete < Trailblazer::Operation
-  include Model
-  include Policy
-  model  Clinic,       :find
-  policy ClinicPolicy, :destroy?
+  step Model(Clinic, :find)
+  step Policy::Pundit(ClinicPolicy, :destroy?)
+  step :process
 
-  def process(_params)
+  def process(_options, model:, **)
     model.destroy!
   end
 end

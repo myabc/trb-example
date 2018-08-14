@@ -7,19 +7,18 @@ RSpec.describe Doctor::Create, type: :operation do
   let(:clinic) { create(:clinic, author: patient_author) }
 
   context 'with invalid params' do
-    subject(:operation) { Doctor::Create.run(params)[1] }
+    subject(:operation) { Doctor::Create.call(params, 'current_user' => patient_author) }
 
     let(:params) {
       {
         doctor:       { biography: '' },
-        clinic_id:    clinic.id,
-        current_user: patient_author
+        clinic_id:    clinic.id
       }.with_indifferent_access
     }
 
     it 'does not create the doctor' do
-      expect(operation.model).not_to be_persisted
-      expect(operation.contract.errors.messages)
+      expect(operation['model']).not_to be_persisted
+      expect(operation['result.contract.default'].errors.messages)
         .to eq(notes_html: ['must be filled'], biography_html: ['must be filled'])
     end
   end
@@ -28,7 +27,7 @@ RSpec.describe Doctor::Create, type: :operation do
     let(:other_author) { create(:patient) }
     let(:current_user) { patient_author }
 
-    subject(:operation) { Doctor::Create.call(params) }
+    subject(:operation) { Doctor::Create.call(params, 'current_user' => current_user) }
 
     let(:params) {
       {
@@ -39,18 +38,17 @@ RSpec.describe Doctor::Create, type: :operation do
           notes_html:     '<p>A good GP.</p>',
           status:         'current'
         },
-        clinic_id:    clinic.id,
-        current_user: current_user
+        clinic_id:    clinic.id
       }.with_indifferent_access
     }
 
     context 'as a patient' do
       it 'creates the doctor' do
-        expect(operation.model).to be_persisted
+        expect(operation['model']).to be_persisted
       end
 
       it 'assigns current status' do
-        expect(operation.model).to be_current
+        expect(operation['model']).to be_current
       end
     end
 
@@ -58,11 +56,11 @@ RSpec.describe Doctor::Create, type: :operation do
       let(:current_user) { admin }
 
       it 'creates the doctor' do
-        expect(operation.model).to be_persisted
+        expect(operation['model']).to be_persisted
       end
 
       it 'assigns current status' do
-        expect(operation.model).to be_current
+        expect(operation['model']).to be_current
       end
     end
   end

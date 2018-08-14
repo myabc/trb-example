@@ -1,10 +1,9 @@
 class Ward::Bookmark < Trailblazer::Operation
-  include Model
-  include Policy
-  model  Ward, :find
-  policy WardPolicy, :bookmark?
+  step Model(Ward, :find)
+  step Policy::Pundit(WardPolicy, :bookmark?)
+  step :process
 
-  def process(params)
-    model.bookmarks.for(params.fetch(:current_user)).first_or_create
+  def process(_options, model:, current_user:, **)
+    model.bookmarks.for(current_user).first_or_create
   end
 end

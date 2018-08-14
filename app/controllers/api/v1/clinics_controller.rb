@@ -1,30 +1,24 @@
 class Api::V1::ClinicsController < Api::V1::ApiController
-  self.responder = ::ApiResponder
+  include Trailblazer::Endpoint::Controller
 
   def index
-    respond Clinic::Index
+    endpoint Clinic::Index, args: [params, { 'current_user' => current_user }]
   end
 
   def show
-    respond Clinic::Show
+    endpoint Clinic::Show, args: [params, { 'current_user' => current_user }]
   end
 
   def create
-    respond Clinic::Create
+    endpoint Clinic::Create, args: [params, { 'current_user' => current_user }]
   end
 
   def update
-    respond Clinic::Update
+    endpoint Clinic::Update, args: [params, { 'current_user' => current_user }]
   end
 
   def destroy
-    run Clinic::Delete
-    head :no_content
-  end
-
-  private
-
-  def params!(params)
-    params.merge(current_user: current_user)
+    endpoint Clinic::Delete, args: [params, { 'current_user' => current_user }]
+    # head :no_content
   end
 end

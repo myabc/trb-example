@@ -7,12 +7,11 @@ RSpec.shared_context 'with an existing clinic' do
   let(:clinic_params) {
     {
       clinic:         { title: 'Kidney Stones clinic' },
-      department_id:  department.id,
-      current_user:   patient_author
+      department_id:  department.id
     }.with_indifferent_access
   }
 
   let!(:clinic) {
-    Clinic::Create.call(clinic_params).model
+    Clinic::Create.call(clinic_params, 'current_user' => patient_author)['model']
   }
 end

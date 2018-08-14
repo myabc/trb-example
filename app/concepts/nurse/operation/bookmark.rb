@@ -1,6 +1,7 @@
 require_dependency 'employee/operation/bookmark'
 
 class Nurse::Bookmark < ::Employee::Bookmark
-  model  Nurse, :find
-  policy NursePolicy, :bookmark?
+  step Model(Nurse, :find)
+  step Policy::Pundit(NursePolicy, :bookmark?)
+  step :process
 end
